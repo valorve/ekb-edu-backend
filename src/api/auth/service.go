@@ -30,7 +30,7 @@ func register(c *fiber.Ctx) error {
 	userInfo := User{}
 
 	if err := c.BodyParser(&userInfo); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse auth data"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse auth data"})
 	}
 
 	// Проверяем, существует ли уже пользователь с таким же username или email
@@ -49,7 +49,7 @@ func register(c *fiber.Ctx) error {
 
 	result := storage.DB.Create(&user)
 	if result.Error != nil {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Failed to register"})
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "failed to register"})
 	}
 
 	// Create token
@@ -58,7 +58,7 @@ func register(c *fiber.Ctx) error {
 	// Generate encoded token and send it as response.
 	t, err := token.SignedString([]byte(middleware.JwtSecret))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create token"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to create token"})
 	}
 
 	return c.JSON(fiber.Map{"token": t})

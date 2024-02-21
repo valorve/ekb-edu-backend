@@ -80,12 +80,12 @@ func addLesson(c *fiber.Ctx) error {
 	// Разбор JSON тела запроса в структуру EeLesson.
 	if err := c.BodyParser(&lesson); err != nil {
 		// В случае ошибки разбора возвращаем HTTP статус 400 (Bad Request).
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse lesson data"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse lesson data"})
 	}
 
 	result := storage.DB.Create(&lesson)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.JSON(&lesson)
@@ -99,7 +99,7 @@ func getLesson(c *fiber.Ctx) error {
 		First(&lesson)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.JSON(&lesson)
@@ -111,21 +111,21 @@ func updateLesson(c *fiber.Ctx) error {
 	// Разбор JSON тела запроса в структуру EeLesson.
 	if err := c.BodyParser(&lessonInfo); err != nil {
 		// В случае ошибки разбора возвращаем HTTP статус 400 (Bad Request).
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse lesson data"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse lesson data"})
 	}
 
 	lessonID, err := strconv.ParseUint(c.Params("id"), 10, 32)
 
 	// Проверка на наличие ID урока для обновления.
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Lesson ID is required"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "lesson ID is required"})
 	}
 
 	// Обновление урока в базе данных.
 	result := storage.DB.Model(&storage.EeLesson{}).Where("lesson_id = ?", lessonID).Updates(lessonInfo)
 	if result.Error != nil {
 		// В случае ошибки обновления возвращаем HTTP статус 500 (Internal Server Error).
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update lesson"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to update lesson"})
 	}
 
 	// Возвращение HTTP статуса 200 (OK), если обновление прошло успешно.
@@ -135,7 +135,7 @@ func updateLesson(c *fiber.Ctx) error {
 func deleteLesson(c *fiber.Ctx) error {
 	lessonID, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid Lesson ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid Lesson ID"})
 	}
 
 	lesson := storage.EeLesson{
@@ -144,7 +144,7 @@ func deleteLesson(c *fiber.Ctx) error {
 
 	result := storage.DB.Delete(&lesson)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)

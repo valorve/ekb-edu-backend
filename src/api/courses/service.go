@@ -14,7 +14,7 @@ func getCourses(c *fiber.Ctx) error {
 	var courses []storage.EeCourse
 
 	if err := storage.DB.Find(&courses).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", err.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", err.Error())})
 	}
 
 	return c.JSON(courses)
@@ -28,7 +28,7 @@ func getCourse(c *fiber.Ctx) error {
 		First(&course)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.JSON(&course)
@@ -38,12 +38,12 @@ func addCourse(c *fiber.Ctx) error {
 	courseInfo := storage.EeCourse{}
 
 	if err := c.BodyParser(&courseInfo); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse course data"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "failed to parse course data"})
 	}
 
 	result := storage.DB.Create(&courseInfo)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -57,7 +57,7 @@ func getSection(c *fiber.Ctx) error {
 		First(&section)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.JSON(&section)
@@ -67,19 +67,19 @@ func addSection(c *fiber.Ctx) error {
 	courseSection := storage.EeCourseSection{}
 
 	if err := c.BodyParser(&courseSection); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse section data"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "failed to parse section data"})
 	}
 
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid Course ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid course id"})
 	}
 
 	courseSection.CourseID = uint(id)
 
 	result := storage.DB.Create(&courseSection)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.JSON(&courseSection)
@@ -89,12 +89,12 @@ func addSections(c *fiber.Ctx) error {
 	courseSection := []*storage.EeCourseSection{}
 
 	if err := c.BodyParser(&courseSection); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse sections data"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "failed to parse sections data"})
 	}
 
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid Course ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid course id"})
 	}
 
 	for _, course := range courseSection {
@@ -103,7 +103,7 @@ func addSections(c *fiber.Ctx) error {
 
 	result := storage.DB.Create(&courseSection)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -117,7 +117,7 @@ func getCourseSections(c *fiber.Ctx) error {
 		Find(&sections)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.JSON(sections)
@@ -133,7 +133,7 @@ func linkUser(c *fiber.Ctx) error {
 
 	courseID, err := strconv.ParseUint(c.Params("course_id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid Course ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid course id"})
 	}
 
 	courseOwner := storage.EeCourseOwner{
@@ -143,7 +143,7 @@ func linkUser(c *fiber.Ctx) error {
 
 	result := storage.DB.Create(&courseOwner)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -157,7 +157,7 @@ func getMyCourses(c *fiber.Ctx) error {
 	var courses []storage.EeCourse
 
 	if err := storage.DB.Where("instructor_id = ?", userID).Find(&courses).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", err.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", err.Error())})
 	}
 
 	return c.JSON(courses)
@@ -166,7 +166,7 @@ func getMyCourses(c *fiber.Ctx) error {
 func deleteCourse(c *fiber.Ctx) error {
 	courseID, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid section ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid course id"})
 	}
 
 	course := storage.EeCourse{
@@ -175,7 +175,7 @@ func deleteCourse(c *fiber.Ctx) error {
 
 	result := storage.DB.Delete(&course)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -185,18 +185,18 @@ func updateCourse(c *fiber.Ctx) error {
 	courseInfo := storage.EeCourse{}
 
 	if err := c.BodyParser(&courseInfo); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse course data"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "failed to parse course data"})
 	}
 
 	courseID, err := strconv.ParseUint(c.Params("id"), 10, 32)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Course ID is required"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid course id"})
 	}
 
 	result := storage.DB.Model(&storage.EeCourse{}).Where("course_id = ?", courseID).Updates(&courseInfo)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -213,12 +213,12 @@ func updateSection(c *fiber.Ctx) error {
 
 	sectionID, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid section ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid section id"})
 	}
 
 	result := storage.DB.Model(&storage.EeCourseSection{}).Where("section_id = ?", sectionID).Updates(sectionInfo)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -227,7 +227,7 @@ func updateSection(c *fiber.Ctx) error {
 func deleteSection(c *fiber.Ctx) error {
 	sectionID, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid section ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid section id"})
 	}
 
 	section := storage.EeCourseSection{
@@ -236,7 +236,7 @@ func deleteSection(c *fiber.Ctx) error {
 
 	result := storage.DB.Delete(&section)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -254,7 +254,7 @@ func getLessonsBySection(c *fiber.Ctx) error {
 	var lessons []storage.EeLesson
 	result := storage.DB.Where("section_id = ?", sectionID).Find(&lessons)
 	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Database error: %s", result.Error.Error())})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
 	return c.JSON(lessons)

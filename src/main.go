@@ -4,6 +4,7 @@ import (
 	"ekb-edu/src/api/auth"
 	"ekb-edu/src/api/courses"
 	"ekb-edu/src/api/courses/lessons"
+	"ekb-edu/src/api/courses/lessons/quizzes"
 	"ekb-edu/src/api/middleware"
 	"ekb-edu/src/database/config"
 	"ekb-edu/src/database/storage"
@@ -37,9 +38,12 @@ func main() {
 	}))
 
 	v1 := app.Group("/v1")
+	{
+		auth.RegisterService(v1)
+		courses.RegisterService(v1)
+		lessons.RegisterService(v1)
+		quizzes.RegisterService(v1)
+	}
 
-	auth.RegisterService(v1)
-	courses.RegisterService(v1)
-	lessons.RegisterService(v1)
 	app.Listen(fmt.Sprintf(":%d", cfg.Web.Port))
 }

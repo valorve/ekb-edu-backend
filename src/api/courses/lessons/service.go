@@ -1,6 +1,7 @@
 package lessons
 
 import (
+	"ekb-edu/src/api/courses/lessons/quizzes"
 	"ekb-edu/src/api/middleware"
 	"ekb-edu/src/database/storage"
 	"fmt"
@@ -83,9 +84,8 @@ func addLesson(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse lesson data"})
 	}
 
-	result := storage.DB.Create(&lesson)
-	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
+	if err := storage.DB.Create(&lesson).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", err.Error())})
 	}
 
 	return c.JSON(&lesson)
@@ -142,9 +142,8 @@ func deleteLesson(c *fiber.Ctx) error {
 		LessonID: uint(lessonID),
 	}
 
-	result := storage.DB.Delete(&lesson)
-	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
+	if err := storage.DB.Delete(&lesson).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", err.Error())})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -155,12 +154,15 @@ func RegisterService(app fiber.Router) {
 	{
 		g.Get("/", getLessons)
 		g.Get("/:id", getLesson)
+		g.Get("/:id/quizzes", quizzes.GetQuizzes)
 
 		admin := g.Group("/", middleware.AdminRequired)
 		{
 			admin.Post("/", addLesson)
 			admin.Patch("/:id", updateLesson)
 			admin.Delete("/:id", deleteLesson)
+
+			admin.Post("/:id/quizzes", quizzes.CreateQuiz)
 		}
 	}
 }

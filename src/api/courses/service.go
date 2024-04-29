@@ -41,12 +41,16 @@ func addCourse(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "failed to parse course data"})
 	}
 
+	userLocals := c.Locals("user").(*jwt.Token)
+	userClaims := userLocals.Claims.(jwt.MapClaims)
+	courseInfo.InstructorID = userClaims["id"].(uint)
+
 	result := storage.DB.Create(&courseInfo)
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", result.Error.Error())})
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	return c.JSON(&courseInfo)
 }
 
 func getSection(c *fiber.Ctx) error {

@@ -5,6 +5,7 @@ import (
 	"ekb-edu/src/api/middleware"
 	"ekb-edu/src/database/storage"
 	"encoding/hex"
+	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -64,11 +65,30 @@ func register(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"token": t})
 }
 
+func changePasswordFromUser(c *fiber.Ctx) error {
+	passwords := ChangePasswordInfo{}
+	if err := c.BodyParser(&passwords); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	userLocals := c.Locals("user").(*jwt.Token)
+	userClaims := userLocals.Claims.(jwt.MapClaims)
+	userID := userClaims["id"].(uint)
+
+	user := storage.EeUser{}
+	tx := storage.DB.Model(&storage.EeUser{}).Where("user_id <> ?", userID).First(&user)
+	if tx.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("database error: %s", tx.Error.Error())})
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}
+
 func login(c *fiber.Ctx) error {
 	userInfo := User{}
 
 	if err := c.BodyParser(&userInfo); err != nil {
-		return c.JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	// Проверяем, существует ли уже пользователь с таким же username или email
@@ -91,17 +111,13 @@ func login(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"token": t})
 }
 
-func restricted(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	name := claims["name"].(string)
-	return c.SendString("Welcome " + name)
-}
-
 func RegisterService(app fiber.Router) {
 	g := app.Group("/auth")
 	g.Post("/register", register)
 	g.Post("/login", login)
+	g.Put("/password", middleware.TokenRequired, changePasswordFromUser)
 
-	g.Get("/restricted", middleware.TokenRequired, restricted)
+	g.Get("/restricted", middleware.TokenRequired, func(c *fiber.Ctx) error {
+		return c.SendStatus(fiber.StatusOK)
+	})
 }

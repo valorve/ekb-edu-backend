@@ -68,15 +68,6 @@ CREATE TABLE ee_images (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Создание таблицы статей
-CREATE TABLE ee_articles (
-    article_id SERIAL PRIMARY KEY,
-    lesson_id INTEGER REFERENCES ee_lessons(lesson_id),
-    content TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Создание таблицы тестов
 CREATE TABLE ee_quizzes (
     quiz_id SERIAL PRIMARY KEY,
@@ -104,17 +95,8 @@ CREATE TABLE ee_quiz_answers (
     answer_text TEXT NOT NULL,
     is_correct BOOLEAN NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- Создание таблицы комментариев
-CREATE TABLE ee_comments (
-    comment_id SERIAL PRIMARY KEY,
-    lesson_id INTEGER REFERENCES ee_lessons(lesson_id),
-    user_id INTEGER REFERENCES ee_users(user_id),
-    text TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(question_id, user_id)
 );
 
 -- Комментарии для таблицы Users
@@ -171,14 +153,6 @@ COMMENT ON COLUMN ee_images.url IS 'URL изображения';
 COMMENT ON COLUMN ee_images.created_at IS 'Дата и время загрузки изображения';
 COMMENT ON COLUMN ee_images.updated_at IS 'Дата и время последнего обновления информации об изображении';
 
--- Комментарии для таблицы Articles
-COMMENT ON TABLE ee_articles IS 'Хранит текстовые статьи, связанные с уроками';
-COMMENT ON COLUMN ee_articles.article_id IS 'Уникальный идентификатор статьи';
-COMMENT ON COLUMN ee_articles.lesson_id IS 'Идентификатор урока, к которому относится статья';
-COMMENT ON COLUMN ee_articles.Content IS 'Текст статьи';
-COMMENT ON COLUMN ee_articles.created_at IS 'Дата и время создания статьи';
-COMMENT ON COLUMN ee_articles.updated_at IS 'Дата и время последнего обновления статьи';
-
 -- Комментарии для таблицы Quizzes
 COMMENT ON TABLE ee_quizzes IS 'Описывает тесты или квизы, связанные с уроками';
 COMMENT ON COLUMN ee_quizzes.quiz_id IS 'Уникальный идентификатор теста';
@@ -205,12 +179,3 @@ COMMENT ON COLUMN ee_quiz_answers.answer_text IS 'Текст ответа пол
 COMMENT ON COLUMN ee_quiz_answers.is_correct IS 'Показывает, является ли ответ правильным';
 COMMENT ON COLUMN ee_quiz_answers.created_at IS 'Дата и время создания ответа';
 COMMENT ON COLUMN ee_quiz_answers.updated_at IS 'Дата и время последнего обновления ответа';
-
--- Комментарии для таблицы Comments
-COMMENT ON TABLE ee_comments IS 'Содержит комментарии пользователей к урокам';
-COMMENT ON COLUMN ee_comments.comment_id IS 'Уникальный идентификатор комментария';
-COMMENT ON COLUMN ee_comments.lesson_id IS 'Идентификатор урока, к которому относится комментарий';
-COMMENT ON COLUMN ee_comments.user_id IS 'Идентификатор пользователя, оставившего комментарий';
-COMMENT ON COLUMN ee_comments.text IS 'Текст комментария';
-COMMENT ON COLUMN ee_comments.created_at IS 'Дата и время создания комментария';
-COMMENT ON COLUMN ee_comments.updated_at IS 'Дата и время последнего обновления комментария';

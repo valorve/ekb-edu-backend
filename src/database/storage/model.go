@@ -98,7 +98,7 @@ type EeQuiz struct {
 }
 
 // QuizQuestion model
-type QuizQuestion struct {
+type EeQuizQuestion struct {
 	QuestionID    uint      `gorm:"primary_key" json:"question_id"`
 	QuizID        uint      `gorm:"type:integer" json:"quiz_id"`
 	QuestionText  string    `gorm:"type:text;not null" json:"question_text"`
@@ -110,20 +110,10 @@ type QuizQuestion struct {
 // QuizAnswer model
 type EeQuizAnswer struct {
 	AnswerID   uint      `gorm:"primary_key" json:"answer_id"`
-	QuestionID uint      `gorm:"type:integer" json:"question_id"`
-	UserID     uint      `gorm:"type:integer" json:"user_id"`
+	QuestionID uint      `gorm:"not null;index:idx_user_question,unique" json:"question_id"`
+	UserID     uint      `gorm:"not null;index:idx_user_question,unique" json:"user_id"`
 	AnswerText string    `gorm:"type:text;not null" json:"answer_text"`
-	IsCorrect  bool      `gorm:"type:boolean;not null" json:"is_correct"`
+	IsCorrect  bool      `gorm:"not null" json:"is_correct"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
-}
-
-// Comment model
-type EeComment struct {
-	CommentID uint      `gorm:"primary_key" json:"comment_id"`
-	LessonID  uint      `gorm:"type:integer" json:"lesson_id"`
-	UserID    uint      `gorm:"type:integer" json:"user_id"`
-	Text      string    `gorm:"type:text;not null" json:"text"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 }

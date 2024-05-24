@@ -59,15 +59,6 @@ CREATE TABLE ee_videos (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Создание таблицы изображений
-CREATE TABLE ee_images (
-    image_id SERIAL PRIMARY KEY,
-    lesson_id INTEGER REFERENCES ee_lessons(lesson_id),
-    url VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Создание таблицы тестов
 CREATE TABLE ee_quizzes (
     quiz_id SERIAL PRIMARY KEY,
@@ -144,14 +135,6 @@ COMMENT ON COLUMN ee_videos.lesson_id IS 'Идентификатор урока,
 COMMENT ON COLUMN ee_videos.url IS 'URL видеофайла';
 COMMENT ON COLUMN ee_videos.created_at IS 'Дата и время загрузки видео';
 COMMENT ON COLUMN ee_videos.updated_at IS 'Дата и время последнего обновления информации о видео';
-
--- Комментарии для таблицы Images
-COMMENT ON TABLE ee_images IS 'Содержит информацию об изображениях, используемых в уроках';
-COMMENT ON COLUMN ee_images.image_id IS 'Уникальный идентификатор изображения';
-COMMENT ON COLUMN ee_images.lesson_id IS 'Идентификатор урока, к которому относится изображение';
-COMMENT ON COLUMN ee_images.url IS 'URL изображения';
-COMMENT ON COLUMN ee_images.created_at IS 'Дата и время загрузки изображения';
-COMMENT ON COLUMN ee_images.updated_at IS 'Дата и время последнего обновления информации об изображении';
 
 -- Комментарии для таблицы Quizzes
 COMMENT ON TABLE ee_quizzes IS 'Описывает тесты или квизы, связанные с уроками';

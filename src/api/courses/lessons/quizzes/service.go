@@ -5,6 +5,7 @@ import (
 	"ekb-edu/src/database/storage"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -45,9 +46,18 @@ func CreateQuiz(c *fiber.Ctx) error {
 	return c.JSON(&quiz)
 }
 
+// QuizQuestion model without the correct answer
+type EeQuizQuestionWithoutAnswer struct {
+	QuestionID   uint      `gorm:"primary_key" json:"question_id"`
+	QuizID       uint      `gorm:"type:integer" json:"quiz_id"`
+	QuestionText string    `gorm:"type:text;not null" json:"question_text"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
 type EeQuizWithQuestions struct {
-	Quiz      storage.EeQuiz           `json:"quiz"`
-	Questions []storage.EeQuizQuestion `json:"questions"`
+	Quiz      storage.EeQuiz                `json:"quiz"`
+	Questions []EeQuizQuestionWithoutAnswer `json:"questions"`
 }
 
 func getQuiz(c *fiber.Ctx) error {

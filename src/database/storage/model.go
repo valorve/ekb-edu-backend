@@ -70,24 +70,6 @@ type EeVideo struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-// Image model
-type EeImage struct {
-	ImageID   uint      `gorm:"primary_key" json:"image_id"`
-	LessonID  uint      `gorm:"type:integer" json:"lesson_id"`
-	URL       string    `gorm:"type:varchar(255);not null" json:"url"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-// Article model
-type EeArticle struct {
-	ArticleID uint      `gorm:"primary_key" json:"article_id"`
-	LessonID  uint      `gorm:"type:integer" json:"lesson_id"`
-	Content   string    `gorm:"type:text;not null" json:"content"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
 // Quiz model
 type EeQuiz struct {
 	QuizID    uint      `gorm:"primary_key" json:"quiz_id"`

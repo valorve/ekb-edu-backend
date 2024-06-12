@@ -60,6 +60,10 @@ type EeQuizWithQuestions struct {
 	Questions []EeQuizQuestionWithoutAnswer `json:"questions"`
 }
 
+func (EeQuizWithQuestions) TableName() string {
+	return "ee_quiz_questions"
+}
+
 func getQuiz(c *fiber.Ctx) error {
 	quizID, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	// Проверка на наличие ID урока для обновления.

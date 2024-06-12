@@ -60,7 +60,7 @@ type EeQuizWithQuestions struct {
 	Questions []EeQuizQuestionWithoutAnswer `json:"questions"`
 }
 
-func (EeQuizWithQuestions) TableName() string {
+func (EeQuizQuestionWithoutAnswer) TableName() string {
 	return "ee_quiz_questions"
 }
 

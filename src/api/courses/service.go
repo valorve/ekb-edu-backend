@@ -272,6 +272,7 @@ func RegisterService(app fiber.Router) {
 
 		courses.Get("/:id/sections", getCourseSections)
 		courses.Get("/sections/:id", getSection)
+		courses.Get("/sections/:id/lessons", getLessonsBySection)
 
 		admin := courses.Group("/", middleware.TokenRequired, middleware.AdminRequired)
 		{
@@ -288,7 +289,6 @@ func RegisterService(app fiber.Router) {
 			{
 				admin.Patch("/sections/:id", updateSection)
 				admin.Delete("/sections/:id", deleteSection)
-				admin.Get("/sections/:id/lessons", getLessonsBySection)
 			}
 		}
 	}
